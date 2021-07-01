@@ -18,7 +18,7 @@ jobs:
         run: |
           git config --local user.email "github-action-bot@grid.ai"
           git config --local user.name "GitHub Action Bot"
-          git checkout -b cherry-pick-${GITHUB_SHA} master
+          git checkout -b cherry-pick-${GITHUB_SHA} origin/master
           git cherry-pick ${GITHUB_SHA}
           git rebase master
           git push origin cherry-pick-${GITHUB_SHA}
