@@ -12,20 +12,20 @@ jobs:
     steps:
       - name: Checkout Code
         uses: actions/checkout@v2
-        with: 
+        with:
           fetch-depth: 0
       - name: Create Pull Request
         run: |
           git config --local user.email "github-action-bot@grid.ai"
           git config --local user.name "GitHub Action Bot"
-          git checkout -b cherry-pick-${GITHUB_SHA} origin/master
+          git checkout master
+          git checkout -b cherry-pick-${GITHUB_SHA} master
           git cherry-pick ${GITHUB_SHA}
           git rebase master
           git push origin cherry-pick-${GITHUB_SHA}
           AUTHOR=${{github.event.pusher.name}}
           SHORT_SHA=$(git rev-parse --short ${GITHUB_SHA})
-          BRANCH_NAME=${GITHUB_REF#refs/heads/}
           COMMIT_MESSAGE="${{github.event.commits[0].message}}"
-          hub pull-request --assign ${AUTHOR} --labels _ci_ --base master --head cherry-pick-${GITHUB_SHA} --message "Cherry-pick ${SHORT_SHA}: from ${BRANCH_NAME} to master" --message "${COMMIT_MESSAGE}"
+          hub pull-request --assign ${AUTHOR} --labels _ci_ --base master --head cherry-pick-${GITHUB_SHA} --message "Cherry-pick ${SHORT_SHA}: from ${GITHUB_REF} to master" --message "${COMMIT_MESSAGE}"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
